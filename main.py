@@ -6,7 +6,7 @@ import cv2
 import time
 import sys
 
-# camera path
+# camera path ayarlanmalı
 devpath = '/dev/v4l/by-id/usb-WITHROBOT_Inc._oCamS-1MGN-U_SN_2E955004-video-index0'
 
 #liboCams.FindCamera('oCam')
@@ -76,7 +76,7 @@ try:
     resizeLeft=cv2.resize(frameLeftGray,(840,840))
     resizeRight=cv2.resize(frameRightGray,(840,840))
     
-    # Aruco detection
+    # Aruco ayarları
     arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
     arucoParams = cv2.aruco.DetectorParameters_create()
     (corners, ids_r, rejected) = cv2.aruco.detectMarkers(frameRightColor, arucoDict,
