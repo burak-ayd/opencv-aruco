@@ -6,6 +6,16 @@ import cv2
 import time
 import sys
 
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-a", "--alltest", dest="alltest",
+                  action='store_true', help="test all resolution in playtime")
+parser.add_option("-t", "--time", dest="playtime", default = 1, type = "int",
+                  help="playtime for streaming [sec] intValue, 0 means forever")
+parser.add_option("-i", "--index", dest="index", default = 0, type = "int",
+                  help="index of resolusion mode")
+(options, args) = parser.parse_args()
+
 # camera path ayarlanmalı
 devpath = '/dev/v4l/by-id/usb-WITHROBOT_Inc._oCamS-1MGN-U_SN_2E955004-video-index0'
 
@@ -77,7 +87,8 @@ try:
     resizeRight=cv2.resize(frameRightGray,(840,840))
     
     # Aruco ayarları
-    arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
+    arucoDict = cv2.aruco.Dictionary_get(ARUCO_DICT["DICT_5X5_50"])
+    
     arucoParams = cv2.aruco.DetectorParameters_create()
     (corners, ids_r, rejected) = cv2.aruco.detectMarkers(frameRightColor, arucoDict,
       parameters=arucoParams)
@@ -98,7 +109,3 @@ test.Stop()
 cv2.destroyAllWindows()
 char = cv2.waitKey(1)
 test.Close()
-
-
-
-
