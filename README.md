@@ -1,6 +1,6 @@
 ##Gerekli Kütüphane
 ```
-python3 -m pip install v4l2-fix
+python3 -m pip install v4l2-fix v4l-utils imutils
 ```
 
 #### main.py içerisinde 10. satırda kamera yolu için değişken bulunuyor.
