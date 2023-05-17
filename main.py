@@ -6,16 +6,6 @@ import cv2
 import time
 import sys
 
-from optparse import OptionParser
-parser = OptionParser()
-parser.add_option("-a", "--alltest", dest="alltest",
-                  action='store_true', help="test all resolution in playtime")
-parser.add_option("-t", "--time", dest="playtime", default = 1, type = "int",
-                  help="playtime for streaming [sec] intValue, 0 means forever")
-parser.add_option("-i", "--index", dest="index", default = 0, type = "int",
-                  help="index of resolusion mode")
-(options, args) = parser.parse_args()
-
 # camera path ayarlanmalı
 devpath = '/dev/v4l/by-id/usb-WITHROBOT_Inc._oCamS-1MGN-U_SN_2E955004-video-index0'
 
@@ -31,14 +21,7 @@ fmtlist = test.GetFormatList()
 
 ctrlist = test.GetControlList()
 
-test.Close()
-if options.alltest is True:
-  len_range = list(range(len(fmtlist)))
-else:
-  if options.index >= len(fmtlist):
-    print('INDEX error', options.index, 'index reset to default value 0')
-    options.index = 0  
-  len_range = { options.index }  
+test.Close() 
 
 test = liboCams.oCams(devpath, verbose=0)
 test.Set(fmtlist[7])
@@ -90,10 +73,16 @@ try:
     arucoDict = cv2.aruco.Dictionary_get(ARUCO_DICT["DICT_5X5_50"])
     
     arucoParams = cv2.aruco.DetectorParameters_create()
-    (corners, ids_r, rejected) = cv2.aruco.detectMarkers(frameRightColor, arucoDict,
+    (corners, ids_r, rejected) = cv2.aruco.detectMarkers(adaptive_threshold, arucoDict,
       parameters=arucoParams)
     
-    cv2.putText(resizeRight, f'ID: {ids_r}', (20, 30), cv2.FONT_HERSHEY_SIMPLEX,0.7, (255, 255, 255), 1)
+    arucoParams = cv2.aruco.DetectorParameters_create()
+    (corners, ids_l, rejected) = cv2.aruco.detectMarkers(frameLeftGray, arucoDict,
+      parameters=arucoParams)
+    
+    cv2.putText(resizeRight, f'ID: {ids_r}', (20, 30), cv2.FONT_HERSHEY_SIMPLEX,0.6, (255, 255, 255), 1)
+    cv2.putText(resizeLeft, f'ID: {ids_l}', (20, 30), cv2.FONT_HERSHEY_SIMPLEX,0.6, (255, 255, 255), 1)
+    
     mergedLeftRight = np.concatenate((resizeRight,resizeLeft), axis=1)
     cv2.imshow("Left - Right", mergedLeftRight)
     
@@ -102,8 +91,6 @@ try:
 except Exception as error:
     # handle the exception
     print("An exception occurred:", error) 
-
-
 
 test.Stop()  
 cv2.destroyAllWindows()
